@@ -121,5 +121,101 @@ func main() {
 
 ## 内建变量类型
 
+### 变量类型
+
+- bool, string
+
+- (u)int, (u)int8, (u)int16, (u)int32, (u)int64, uintptr 
+
+  加u就是无符号整数，不加u就是有符号整数
+
+  有符号整数分为固定长度、不固定长度（根据操作系统32还是64位）
+
+  uintptr就是指针
+
+- byte, rune
+
+  rune就是字符型，char只有一字节所以坑多，rune为32位四字节
+
+- float32, float64, complex64, complex128
+
+  complex复数类型，complex64实部虚部分别为32位
+
+  欧拉公式 cmplx.Pow(math.E, 1i*math.Pi) + 1
+
+### 强制类型转换
+
+类型转换只有强制的，没有隐式类型转换
+
+```go
+var a, b = 3, 4
+var c int
+c = int(math.Sqrt(float64(a*a + b*b))) // 如果没有float64 int两次强转会报错，不能隐式互转
+fmt.Println(c) // 5
+```
+
 ## 常量与枚举
+
+```go
+func consts() {
+   // 1. 常量的数值可以作为各种类型使用
+   const fileName = "123.txt"
+   const a, b = 3, 4
+   var d int = a
+   var c = math.Sqrt(a*a + b*b)
+   fmt.Println(a, b, c, d, fileName)
+   // 2. 常量不必全部大写 首字母大写的变量另有含义
+   // 3. 常量也可以集中定义
+   const (
+      name = "ryan"
+      age  = 18
+   )
+   fmt.Println(name, age)
+}
+```
+
+```go
+func emuns() {
+   // 1.通过const自定义枚举类型
+   const (
+      cpp    = 0
+      java   = 1
+      python = 2
+      golang = 3
+   )
+   fmt.Println(cpp, java, python, golang) // 0 1 2 3
+   // 2. 通过iota自增值定义枚举类型
+   // iota表示一组自增值
+   // _表示跳过某个自增值
+   const (
+      beijing = iota
+      _
+      _
+      shanghai
+      guangzhou
+      shenzhen
+   )
+   fmt.Println(beijing, shanghai, guangzhou, shenzhen) // 0 3 4 5
+   // 3. b kb mb gb tb pb
+   const (
+      b = 1 << (10 * iota)
+      kb
+      mb
+      gb
+      tb
+      pb
+   )
+   fmt.Println(b, kb, mb, gb, tb, pb) // 1 1024 1048576 1073741824...
+}
+```
+
+## 条件语句
+
+## 循环语句
+
+## 函数
+
+## 指针
+
+
 
