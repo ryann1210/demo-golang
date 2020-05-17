@@ -346,6 +346,82 @@ func forever() {
 
 ## 函数
 
+```go
+// 1.允许多个返回值
+func div1(a, b int) (int, int) {
+	return a / b, a % b
+}
+// 2.多返回值另一种写法 可以给返回值变量名
+func div2(a, b int) (q, r int) {
+	return a / b, a % b
+}
+// 3.方法内操作返回变量 最后直接return
+func div3(a, b int) (q, r int) {
+	q = a / b
+	r = a % b
+	return
+}
+// 4.正常接受多参返回
+q, r := div1(13, 3)
+// 5.如果只需要其中一个参数
+q, _ := div1(13, 3)
+```
+
+```go
+// 1.计算方法可以改造成多返回
+func math(a, b int, op string) (int, error) {
+   switch op {
+   case "+":
+      return a + b, nil
+   case "-":
+      return a - b, nil
+   case "*":
+      return a * b, nil
+   case "/":
+      return a / b, nil
+   default:
+      return 0, fmt.Errorf("操作符错误：" + op)
+   }
+}
+// 2.接受多返回值判断结果
+if result, err := math(13, 2, "asdf"); err != nil {
+	fmt.Println(err)
+} else {
+	fmt.Println(result)
+}
+```
+
+```go
+// 类似java函数式接口 把实现逻辑交到调用方
+func math2(op func(int, int) int, a, b int) int {
+   pointer := reflect.ValueOf(op).Pointer()    // 反射获取指针
+   opName := runtime.FuncForPC(pointer).Name() // 获取方法名称
+   fmt.Printf("Calling func %s with args (%d, %d)\n", opName, a, b)
+   return op(a, b)
+}
+
+// Calling func main.main.func1 with args (3, 4)
+// 81
+fmt.Println(
+    math2(func(a int, b int) int {
+        return int(math.Pow(float64(a), float64(b)))
+    }, 3, 4))
+```
+
+```go
+// 1.函数的可变参数列表
+func sum(numbers ...int) int {
+   result := 0
+   // 2.range遍历获得下标和值
+   for _, v := range numbers {
+      result += v
+   }
+   return result
+}
+
+fmt.Println(sum(1, 2, 3, 4, 5)) // 15
+```
+
 ## 指针
 
 
