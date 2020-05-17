@@ -468,3 +468,173 @@ func refSwap(a, b *int) {
 }
 ```
 
+# 第三章 内建容器
+
+## 数组
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+   // 数组初始化及赋值
+   var arr1 [5]int
+   arr2 := [3]int{1, 3, 5}
+   arr3 := [...]int{2, 4, 6}
+   fmt.Println(arr1, arr2, arr3)
+   var grid [4][5]bool
+   fmt.Println(grid)
+
+   // 遍历数组 用range 用i遍历也可以
+   // 如果只用v的话 i用_占位
+   for i, v := range arr3 {
+      fmt.Println(i, v)
+   }
+}
+```
+
+```go
+// 1.数组是值类型 传递的时候会进行拷贝
+// 2.[10]int和[20]int是不同类型
+fmt.Println(arr1) // [0 0 0 0 0]
+printArr(arr1)
+fmt.Println(arr1) // [0 0 0 0 0]
+
+func printArr(arr [5]int) {
+   arr[0] = 100 // [100 0 0 0 0]
+   fmt.Println(arr)
+   for i, v := range arr {
+      fmt.Println(i, v)
+   }
+}
+```
+
+```go
+// 1.可以通过指针传递进行操作
+fmt.Println(arr1) // [0 0 0 0 0]
+printArr2(&arr1)
+fmt.Println(arr1) // [100 0 0 0 0]
+
+func printArr2(arr *[5]int) {
+   fmt.Println(arr) // &[0 0 0 0 0]
+   // 2.可以直接操作指针下标修改数据
+   arr[0] = 100
+   fmt.Println(arr) // &[100 0 0 0 0]
+}
+```
+
+## 切片的概念
+
+## 切片的操作
+
+## Map
+
+## Map例题
+
+## 字符和字符串处理
+
+# 第四章 面向“对象”
+
+## 结构体和方法
+
+## 包和封装
+
+## 扩展已有类型
+
+## 使用内嵌来扩展已有类型
+
+# 第五章 Go语言依赖管理
+
+## 依赖管理
+
+## GOPATH和GOVENDOR
+
+## go mod的使用
+
+## 目录的整理
+
+# 第六章 面向接口
+
+## 接口概念
+
+## duck typing概念
+
+## 接口的定义和实现
+
+## 接口的值类型
+
+## 接口的组合
+
+## 常用系统接口
+
+# 第七章 函数式编程
+
+## 函数式编程
+
+## 函数式编程例一
+
+## 函数式编程例二
+
+# 第八章 错误处理和资源管理
+
+## defer调用
+
+## 错误处理概念
+
+## 服务器统一出错处理1
+
+## panic和recover
+
+## 服务器统一出错处理2
+
+# 第九章 测试与性能调优
+
+## 测试
+
+## 代码覆盖率和性能测试
+
+## 使用pprof进行调优
+
+## 测试http服务器1
+
+## 测试http服务器2
+
+## 生成文档和示例代码
+
+## 测试总结
+
+# 第十章 Goroutine
+
+## goroutine
+
+## go语言的调度器
+
+# 第十一章 Channel
+
+## channel
+
+## 使用Channel等待任务结束
+
+## 使用Channel进行树的遍历
+
+##  用select进行调度
+
+## 传统同步机制
+
+# 第十二章 迷宫的广度优先搜索
+
+## 迷宫算法
+
+## 迷宫代码实现
+
+# 第十三章 http及其他标准库
+
+## http标准库
+
+## 其他标准库
+
+## gin框架介绍
+
+## 为gin添加middleware
+
