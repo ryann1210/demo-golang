@@ -121,7 +121,7 @@ func main() {
 
 ## 内建变量类型
 
-### 变量类型
+**变量类型**
 
 - bool, string
 
@@ -143,7 +143,7 @@ func main() {
 
   欧拉公式 cmplx.Pow(math.E, 1i*math.Pi) + 1
 
-### 强制类型转换
+**强制类型转换**
 
 类型转换只有强制的，没有隐式类型转换
 
@@ -210,6 +210,79 @@ func emuns() {
 ```
 
 ## 条件语句
+
+```go
+// 1.参数列表变量名在前 变量类型在后
+// 2.返回值类型在参数列表后
+func bounded(v int) int {
+   // 3.if判断条件不需要括号
+   if v > 100 {
+      return 100
+   } else if v < 0 {
+      return 0
+   } else {
+      return v
+   }
+}
+```
+
+```go
+const filename = "2.4条件语句.txt"
+
+// 1.函数可以有多个返回值
+contents, err := ioutil.ReadFile(filename)
+// 2.nil有点像java的null
+if err != nil {
+   fmt.Println(err)
+} else {
+   // 3.contents为bytes数组，用Printf可以打印出内容
+   fmt.Printf("%s\n", contents)
+}
+
+// 4.可以在if里写执行和判断的逻辑 这样写contents和err只能在if内访问
+if contents, err := ioutil.ReadFile(filename); err != nil {
+    fmt.Println(err)
+} else {
+    fmt.Printf("%s\n", contents)
+}
+```
+
+```go
+func eval(a, b int, op string) int {
+    var result int
+    // 1.swtich会自动break 除非使用fallthrough
+    // 2.switch变量 case变量
+    switch op {
+    case "+":
+       result = a + b
+    case "-":
+       result = a - b
+    case "*":
+       result = a * b
+    case "/":
+       result = a / b
+    default:
+       // 3.相当于报错 终止程序执行
+       panic("不支持的操作符")
+    }
+	return result
+}
+
+func grade(score int) string {
+	var result string
+    // 3.也可以swtich空 case里面写判断条件
+	switch {
+	case score < 0 || score > 100:
+        // 4.Sprintf返回string
+		panic(fmt.Sprintf("Wrong score: %d", score))
+	case score < 60:
+		result = "不及格"
+	case score <= 100:
+		result = "及格"
+	}
+	return result
+}
+```
 
 ## 循环语句
 
