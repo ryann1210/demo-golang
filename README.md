@@ -648,7 +648,80 @@ fmt.Printf("s8=%v, len(s8)=%d, cap(s8)=%d\n", s8, len(s8), cap(s8))
 
 ## Map
 
+**Key的条件**
+
+- map使用哈希表 必须可以比较相等
+- 除了slice、map、function的内建类型都可以作为key
+- Struct类型不包括上述字段，也可作为key
+
+```go
+// map初始化
+m1 := map[string]string{"name": "ryan", "sex": "male"} // 空map
+m2 := make(map[string]string)                          // 空map
+var m3 map[string]string                               // nil
+```
+
+```go
+// range方式遍历 无序输出
+for k, v := range m1 { // 这里如果用m2m3遍历也不会出错
+   fmt.Println(k, v)
+}
+```
+
+```go
+// 通过key取值 如果key不存在返回空字符串
+name := m1["name"]
+fmt.Println(name)
+// 接受两个参数判断是否存在
+if sex, exist := m1["sex"]; exist {
+    fmt.Println(sex)
+} else {
+    fmt.Println("Key not exist.")
+}
+
+// 通过key删除键值对
+delete(m1, "sex")
+```
+
 ## Map例题
+
+```go
+package main
+
+import "fmt"
+
+/*
+寻找最长不含有重复字符的子串
+*/
+func main() {
+   result := lengthOfLongestSubstring("helloworld")
+   fmt.Println(result)
+}
+
+func lengthOfLongestSubstring(s string) int {
+   // 记录每个字符最后出现的位置
+   lastOccurred := make(map[byte]int)
+   // 有效子串的起始
+   start := 0
+   // 最大长度
+   maxLength := 0
+   // 遍历字符串
+   for i, ch := range []byte(s) {
+      // 当前字符已出现过 并且在有效子串内
+      if lastI, ok := lastOccurred[ch]; ok && lastI >= start {
+         // 有效子串的起始值+1
+         start = lastI + 1
+      }
+      // 重新计算最大长度
+      if i-start+1 > maxLength {
+         maxLength = i - start + 1
+      }
+      // 更新当前字符最后出现的位置
+      lastOccurred[ch] = i
+   }
+   return maxLength
+}
+```
 
 ## 字符和字符串处理
 
