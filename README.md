@@ -885,6 +885,13 @@ func createNode(value int) *treeNode {
 
 ## 包和封装
 
+- 名字一般使用CamelCase
+- 首字母大写 public
+- 首字母小写 private
+- 每个目录一个包，public private针对包来说
+- main包包含可执行入口
+- 为结构体定义的方法必须同一个包内 但是可以在不同的文件
+
 ## 扩展已有类型
 
 ## 使用内嵌来扩展已有类型
