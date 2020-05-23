@@ -894,7 +894,100 @@ func createNode(value int) *treeNode {
 
 ## 扩展已有类型
 
+```go
+package myTree
+
+import (
+   "demo-golang/tree"
+   "fmt"
+)
+
+// 组合方式
+type Node struct {
+   Node *tree.Node
+}
+
+func (node *Node) Print() {
+   fmt.Println("这是myTree.Node的方法")
+   node.Node.Print()
+}
+```
+
+```go
+package queue
+
+// 别名方式
+type Queue []int
+
+func (q *Queue) Push(v int) {
+   *q = append(*q, v)
+}
+
+func (q *Queue) Pop() int {
+   head := (*q)[0]
+   *q = (*q)[1:]
+   return head
+}
+
+func (q *Queue) IsEmpty() bool {
+   return len(*q) == 0
+}
+```
+
+```go
+package main
+
+import (
+   "demo-golang/myTree"
+   "demo-golang/queue"
+   "demo-golang/tree"
+   "fmt"
+)
+
+func main() {
+   // 组合方式
+   node := myTree.Node{Node: &tree.Node{Value: 123}}
+   node.Print()
+
+   // 别名方式
+   q := queue.Queue{1}
+   q.Push(2)
+   q.Push(3)
+   fmt.Println(q.Pop())
+   fmt.Println(q.Pop())
+   fmt.Println(q.IsEmpty())
+   fmt.Println(q.Pop())
+   fmt.Println(q.IsEmpty())
+}
+```
+
 ## 使用内嵌来扩展已有类型
+
+- 内嵌方式可以重写"基类"的方法
+- 不可以用"基类"的引用接收"子类"的实例
+- 定义别名最简单，使用组合最常用，内嵌省下许多代码
+
+```go
+package embedTree
+
+import (
+   "demo-golang/tree"
+   "fmt"
+)
+
+type Node struct {
+   *tree.Node // 内嵌方式扩展
+}
+
+func (node *Node) Print() {
+   if node == nil || node.Node == nil {
+      return
+   }
+
+   fmt.Println("这是embedTree.Node的方法")
+   node.Node.Print() // 默认取变量的结尾Node
+}
+```
 
 # 第五章 Go语言依赖管理
 
