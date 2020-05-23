@@ -1,6 +1,8 @@
 package tree
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Node struct {
 	Value       int
@@ -12,5 +14,6 @@ func (node *Node) SetValue(value int) {
 }
 
 func (node *Node) Print() {
+	fmt.Println("这是tree.Node的方法")
 	fmt.Println("Value: ", node.Value)
 }
