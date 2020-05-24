@@ -993,15 +993,62 @@ func (node *Node) Print() {
 
 ## 依赖管理
 
+三个阶段：GOPATH、GOVENDOR、go mod
+
 ## GOPATH和GOVENDOR
+
+GOPATH 所有项目的依赖都在$GOPATH$/src下，所以项目对依赖版本有区别的问题无法解决
+
+GOVENDOR 项目里建立vendor目录，ide可以识别并优先从vendor目录加载依赖
+
+所以查询依赖的顺序是（1vendor 2GOOT 3GOPATH）
 
 ## go mod的使用
 
+- 通过go get -u go.uber.org/zap@v1.15获取依赖
+- 依赖存储在项目同级目录的pkg下
+- go mod tidy清洁项目内的go sum文件
+- 如果老项目迁移到go mod：go mod init xxx（创建go mod文件）、go build ./...（编译并导入依赖）
+
 ## 目录的整理
+
+- 每个目录下只允许有一个main函数，不然go build ./...检查编译不通过
+- go install ./... 产生编译结果
+- 结果在GOPATH下的bin目录
+- go env GOPATH
 
 # 第六章 面向接口
 
 ## 接口概念
+
+```go
+package main
+
+import (
+	"fmt"
+    "imooc.com/ryan/xxx/testing"
+    "imooc.com/ryan/xxx/prod"
+)
+
+func getRetriever() retriever {
+    // 只需要修改这里就可以实现切换
+    // return testing.Retriever{}
+    return prod.Retriever{}
+}
+
+// 定义一个接口
+type retriever interface {
+    Get(string) string
+}
+
+func main() {
+    // 不管是testing还是prod都可以用接口变量接收
+    var r retriever = getRetriever()
+    fmt.Println(r.Get("https://www.imooc.com"))
+}
+```
+
+
 
 ## duck typing概念
 
