@@ -1048,11 +1048,107 @@ func main() {
 }
 ```
 
-
-
-## duck typing概念
-
 ## 接口的定义和实现
+
+假定有Cat Dog两个结构体
+
+```go
+package cat
+
+import "fmt"
+
+type Cat struct {
+   Age int
+}
+
+// 这边可以用Cat也可以用*Cat
+// 变量名cat可以省略 根据是否需要取cat的值
+// 如果用*Cat 那么外面必须传入指针
+// 如果用Cat 那么外面用值或者指针都可以
+func (cat Cat) Bark() {
+   fmt.Println("Cat: 汪汪汪")
+}
+```
+
+```go
+package dog
+
+import "fmt"
+
+type Dog struct {
+   Age int
+}
+
+func (dog Dog) Bark() {
+   fmt.Println("Dog: 汪汪汪")
+}
+```
+
+```go
+package main
+
+import (
+   "demo-goland-gomod/cat"
+   "demo-goland-gomod/dog"
+   "fmt"
+)
+
+type Animal interface {
+   Bark()
+}
+
+// 这边调用的是接口的方法
+func bark(animal Animal){
+   animal.Bark()
+}
+
+func main() {
+   var animal Animal
+
+   animal = &dog.Dog{}
+   bark(animal)
+   fmt.Printf("%T %v\n", animal, animal)
+
+   animal = &cat.Cat{}
+   bark(animal)
+   fmt.Printf("%T %v\n", animal, animal)
+
+   // 类似于java的向下转型 就可以用实际类型的方法和变量
+    switch v := animal.(type) {
+	case cat.Cat:
+		fmt.Println("这是一只猫, Age: ", v.Age)
+	case dog.Dog:
+		fmt.Println("这是一只狗. Age: ", v.Age)
+	}
+    // 这也是类似向下转型
+	if realAnimal, ok := animal.(*cat.Cat); ok {
+		fmt.Println(realAnimal.Age)
+	}else {
+		fmt.Println("No match.")
+	}
+}
+```
+
+```go
+package queue
+// interface{}表示任何类型
+type Queue []interface{}
+
+func (q *Queue) Push(v interface{}) {
+   *q = append(*q, v)
+}
+
+func (q *Queue) Pop() interface{} {
+   head := (*q)[0]
+   *q = (*q)[1:]
+   // 如果这边要指定返回的是int 可以向下转型
+   return head.(int)
+}
+
+func (q *Queue) IsEmpty() bool {
+   return len(*q) == 0
+}
+```
 
 ## 接口的值类型
 
