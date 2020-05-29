@@ -1150,9 +1150,14 @@ func (q *Queue) IsEmpty() bool {
 }
 ```
 
-## 接口的值类型
-
 ## 接口的组合
+
+```go
+type PosterAndGetter interface {
+   Poster
+   Get(host string)
+}
+```
 
 ## 常用系统接口
 
