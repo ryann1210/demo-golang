@@ -1266,13 +1266,215 @@ func tryDefer() {
 }
 ```
 
-## 错误处理概念
-
 ## 服务器统一出错处理1
+
+```go
+// 业务处理 启动web服务访问本地文件
+func HandleFileList(writer http.ResponseWriter, request *http.Request) error {
+   path := request.URL.Path[len("/list/"):]
+   file, err := os.Open(path)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+
+   all, err := ioutil.ReadAll(file)
+   if err != nil {
+      return err
+   }
+   writer.Write(all)
+   return nil
+}
+```
+
+```go
+package main
+
+import (
+   "demo-golang/fileListingServer"
+   "net/http"
+   "os"
+)
+
+// 定义接口 业务处理已实现该接口
+type appHandler func(writer http.ResponseWriter, request *http.Request) error
+
+// 业务逻辑方法上包装一层异常处理
+func errWrapper(handler appHandler) func(http.ResponseWriter, *http.Request) {
+   return func(writer http.ResponseWriter, request *http.Request) {
+      err := handler(writer, request)
+      if err != nil {
+         code := http.StatusOK
+         switch {
+         case os.IsNotExist(err):
+            code = http.StatusNotFound
+         case os.IsPermission(err):
+            code = http.StatusForbidden
+         default:
+            code = http.StatusInternalServerError
+         }
+         http.Error(writer, http.StatusText(code), code)
+      }
+   }
+}
+
+func main() {
+   http.HandleFunc("/list/", errWrapper(fileListingServer.HandleFileList))
+   err := http.ListenAndServe(":8888", nil)
+   if err != nil {
+      panic(err)
+   }
+}
+```
 
 ## panic和recover
 
+panic功能：
+
+- 停止当前函数执行
+
+- 一直向上返回，执行每一层的defer
+
+- 如果没有遇见recover，程序退出
+
+  ```go
+  package main
+  
+  import (
+     "fmt"
+  )
+  
+  func main() {
+     tryRecover()
+  }
+  
+  func tryRecover() {
+     defer func() {
+        r := recover()
+        if err, ok := r.(error); ok {
+           fmt.Println("Error occurred: ", err)
+        } else {
+           panic(fmt.Sprintf("i dont know what to do: %v", r))
+        }
+     }()
+  
+     // 可以捕获异常处理
+     //b := 0
+     //a := 5 / b
+     //fmt.Println(a)
+  
+     // 不是error类型 捕获后继续panic
+     panic(123)
+  }
+  ```
+
 ## 服务器统一出错处理2
+
+这个示例需要细品
+
+```go
+package main
+
+import (
+   "demo-golang/fileListingServer"
+   "log"
+   "net/http"
+   "os"
+)
+
+type appHandler func(writer http.ResponseWriter, request *http.Request) error
+
+// 业务逻辑方法上包装一层异常处理
+func errWrapper(handler appHandler) func(http.ResponseWriter, *http.Request) {
+   return func(writer http.ResponseWriter, request *http.Request) {
+      defer func() {
+         if r := recover(); r != nil {
+            log.Printf("Panic: %v", r)
+            http.Error(writer, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+         }
+      }()
+
+      err := handler(writer, request)
+
+      if err != nil {
+         log.Printf("Error occurred handling request: %s", err.Error())
+
+         if userError, ok := err.(userError); ok {
+            http.Error(writer, userError.Message(), http.StatusBadRequest)
+            return
+         }
+
+         code := http.StatusOK
+         switch {
+         case os.IsNotExist(err):
+            code = http.StatusNotFound
+         case os.IsPermission(err):
+            code = http.StatusForbidden
+         default:
+            code = http.StatusInternalServerError
+         }
+         http.Error(writer, http.StatusText(code), code)
+      }
+   }
+}
+
+type userError interface {
+   error
+   Message() string
+}
+
+func main() {
+   http.HandleFunc("/", errWrapper(fileListingServer.HandleFileList))
+   err := http.ListenAndServe(":8888", nil)
+   if err != nil {
+      panic(err)
+   }
+}
+```
+
+```go
+package fileListingServer
+
+import (
+   "io/ioutil"
+   "net/http"
+   "os"
+   "strings"
+)
+
+const prefix = "/list/"
+
+type userError string
+
+func (e userError) Error() string {
+   return e.Message()
+}
+
+func (e userError) Message() string {
+   return string(e)
+}
+
+func HandleFileList(writer http.ResponseWriter, request *http.Request) error {
+
+   if strings.Index(request.URL.Path, prefix) != 0 {
+      return userError("path must start with " + prefix)
+   }
+
+   path := request.URL.Path[len(prefix):]
+   file, err := os.Open(path)
+   if err != nil {
+      return err
+   }
+   defer file.Close()
+
+   all, err := ioutil.ReadAll(file)
+   if err != nil {
+      return err
+   }
+   writer.Write(all)
+   return nil
+}
+```
 
 # 第九章 测试与性能调优
 
