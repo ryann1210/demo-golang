@@ -1163,15 +1163,108 @@ type PosterAndGetter interface {
 
 # 第七章 函数式编程
 
-## 函数式编程
+```go
+package main
 
-## 函数式编程例一
+import (
+   "bufio"
+   "fmt"
+   "io"
+   "strings"
+)
 
-## 函数式编程例二
+func adder() func(int) int {
+   // 自由变量
+   sum := 0
+   return func(v int) int {
+      // v局部变量
+      sum += v
+      return sum
+   }
+}
+
+func fibonacci() func() int {
+   a, b := 0, 1
+   return func() int {
+      a, b = b, a+b
+      return a
+   }
+}
+
+// 为斐波那契生成器时间reader接口
+func printFileContents(reader io.Reader) {
+   scanner := bufio.NewScanner(reader)
+   for scanner.Scan() {
+      fmt.Println(scanner.Text())
+   }
+}
+
+func fibonacci2() intGen {
+   a, b := 0, 1
+   return func() int {
+      a, b = b, a+b
+      return a
+   }
+}
+
+type intGen func() int
+
+func (g intGen) Read(p []byte) (n int, err error) {
+   next := g()
+   if next > 10000 {
+      return 0, io.EOF
+   }
+   s := fmt.Sprintf("%d\n", next)
+   // 如果p过小的话结果会异常
+   return strings.NewReader(s).Read(p)
+}
+
+func main() {
+   // a内部的sum是同一个 计算结果的时候会累加
+   a := adder()
+   for i := 0; i < 10; i++ {
+      fmt.Println(a(i))
+   }
+
+   // 斐波那契数列
+   f := fibonacci()
+   fmt.Println(f())
+   fmt.Println(f())
+   fmt.Println(f())
+   fmt.Println(f())
+   fmt.Println(f())
+   fmt.Println(f())
+   fmt.Println(f())
+
+   f2 := fibonacci2()
+   printFileContents(f2)
+}
+```
 
 # 第八章 错误处理和资源管理
 
 ## defer调用
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+   tryDefer()
+}
+
+func tryDefer() {
+   // 1 defer定义的逻辑在方法结束时候执行
+   // 2 defer结构为栈 先进后出 所以最终输出3 2 1
+   defer fmt.Println(1)
+   defer fmt.Println(2)
+   fmt.Println(3)
+   return
+   panic("error occurred.")
+   fmt.Println(4)
+}
+```
 
 ## 错误处理概念
 

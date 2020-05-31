@@ -55,20 +55,20 @@ func (g intGen) Read(p []byte) (n int, err error) {
 
 func main() {
 	// a内部的sum是同一个 计算结果的时候会累加
-	//a := adder()
-	//for i := 0; i < 10; i++ {
-	//	fmt.Println(a(i))
-	//}
+	a := adder()
+	for i := 0; i < 10; i++ {
+		fmt.Println(a(i))
+	}
 
 	// 斐波那契数列
-	//f := fibonacci()
-	//fmt.Println(f())
-	//fmt.Println(f())
-	//fmt.Println(f())
-	//fmt.Println(f())
-	//fmt.Println(f())
-	//fmt.Println(f())
-	//fmt.Println(f())
+	f := fibonacci()
+	fmt.Println(f())
+	fmt.Println(f())
+	fmt.Println(f())
+	fmt.Println(f())
+	fmt.Println(f())
+	fmt.Println(f())
+	fmt.Println(f())
 
 	f2 := fibonacci2()
 	printFileContents(f2)
