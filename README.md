@@ -1478,15 +1478,16 @@ func HandleFileList(writer http.ResponseWriter, request *http.Request) error {
 
 # 第九章 测试与性能调优
 
-## 测试
-
-## 代码覆盖率和性能测试
-
 ## 使用pprof进行调优
 
-## 测试http服务器1
+- go test bench -cpuprofile 获取性能数据
+- go tool pprof 查看性能数据（web 展示需要另外安装工具）
+- 分析慢在哪里
+- 优化代码
 
-## 测试http服务器2
+## 测试http服务器
+
+这边没自己手撸，回头有困扰再次看视频
 
 ## 生成文档和示例代码
 
