@@ -8,6 +8,8 @@ import (
 // 文件名必须_test结尾 方法名必须Test开头
 // 这样才会有可执行方法箭头
 // 也可以在Terminal输入go test .
+// with Coverage为代码覆盖率检测
+// go test -coverprofile=c.out / go tool cover -html=c.out
 func TestTriangle(t *testing.T) {
 	tests := []struct{ a, b, c int }{
 		{3, 4, 5},
